@@ -1,40 +1,41 @@
 # 247-bot
 
-A Discord bot that aims to stay online **24/7** and continuously play a lofi stream in a voice channel.
+A Discord bot intended to stay online **24/7** and continuously stream lofi audio in a voice channel.
 
 ## Features
-- Auto-reconnect loop: if the Discord gateway disconnects, the bot will relaunch itself.
-- Lofi playback loop via FFmpeg (`-stream_loop -1`) with stream reconnect flags.
-- Basic commands:
-  - `!join` — joins your current voice channel and starts lofi.
-  - `!playlofi [url]` — restarts playback using default or custom URL.
-  - `!leave` — disconnects from voice.
+- Infinite reconnect loop with exponential backoff if Discord/network disconnects occur.
+- Voice playback auto-restart when a stream drops.
+- Commands:
+  - `!join` — join your current voice channel and start lofi.
+  - `!playlofi [url]` — switch to a default/custom stream URL.
+  - `!status` — show whether the bot is connected and playing.
+  - `!leave` — disconnect from voice.
 
 ## Requirements
 - Python 3.10+
-- FFmpeg installed and available on `PATH`
+- FFmpeg available on `PATH`
 
 ## Setup
-1. Create a Discord bot in the [Discord Developer Portal](https://discord.com/developers/applications), invite it to your server, and enable the **Message Content Intent** if needed for your command setup.
-2. Install dependencies:
+1. Create a bot in the [Discord Developer Portal](https://discord.com/developers/applications).
+2. Enable **Message Content Intent** and **Server Members Intent** (if you expand command features later).
+3. Install dependencies:
    ```bash
    pip install -r requirements.txt
    ```
-3. Create your environment file:
+4. Configure environment:
    ```bash
    cp .env.example .env
-   ```
-4. Export env vars (or use your own loader):
-   ```bash
-   export DISCORD_TOKEN="..."
+   export DISCORD_TOKEN="your_token_here"
    export LOFI_URL="https://play.streamafrica.net/lofiradio"
    export LOG_LEVEL="INFO"
    ```
-5. Start the bot:
+5. Run:
    ```bash
    python bot.py
    ```
 
-## Notes
-- This bot's 24/7 behavior means it automatically attempts to restart the Discord connection forever when network/service errors happen.
-- For true always-on operation, run it under a process manager/system service (e.g., `systemd`, Docker restart policy, PM2, etc.).
+## 24/7 operation note
+The bot retries forever in-process, but true 24/7 hosting should still use a process manager (systemd, Docker restart policies, PM2, etc.) so machine reboots and host crashes are recovered automatically.
+
+## Security note
+If your bot token is ever shared publicly, **immediately regenerate it** in the Discord Developer Portal and update your environment variables.
